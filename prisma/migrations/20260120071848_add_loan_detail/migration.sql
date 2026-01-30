@@ -1,0 +1,12 @@
+-- CreateTable
+CREATE TABLE `LoanDetail` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `loanId` INTEGER NOT NULL,
+    `action` VARCHAR(191) NOT NULL,
+    `actionAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `LoanDetail` ADD CONSTRAINT `LoanDetail_loanId_fkey` FOREIGN KEY (`loanId`) REFERENCES `Loan`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

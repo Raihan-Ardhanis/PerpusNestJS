@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id        Int      @id @default(autoincrement())
+  title     String
+  author    String
+  year      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  loans Loan[]
+}
+
+model Member {
+  id        Int      @id @default(autoincrement())
+  name      String
+  className String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  loans Loan[]
+  users User[]
+}
+
+model Loan {
+  id         Int       @id @default(autoincrement())
+  bookId     Int
+  memberId   Int
+  loanDate   DateTime  @default(now())
+  returnDate DateTime?
+  status     String    @default("BORROWED")
+
+  book    Book         @relation(fields: [bookId], references: [id])
+  member  Member       @relation(fields: [memberId], references: [id])
+  details LoanDetail[]
+}
+
+model LoanDetail {
+  id       Int      @id @default(autoincrement())
+  loanId   Int
+  action   String
+  actionAt DateTime @default(now())
+
+  loan Loan @relation(fields: [loanId], references: [id])
+}
+
+enum UserRole {
+  ADMIN
+  PETUGAS
+  MEMBER
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  role      UserRole @default(MEMBER)
+  memberId  Int?
+  member    Member?  @relation(fields: [memberId], references: [id])
+  createdAt DateTime @default(now())
+}
